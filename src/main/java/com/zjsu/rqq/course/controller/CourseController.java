@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 // 课程控制器
 @RestController
@@ -21,9 +22,63 @@ public class CourseController {
 
     // 获取所有课程
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Course>>> getAllCourses() {
-        // 调用课程服务获取所有课程
+    public ResponseEntity<ApiResponse<?>> getCourses(
+            @RequestParam(required = false) String coursecode,
+            @RequestParam(required = false) String instructorid,
+            @RequestParam(required = false) String search) {
+
+        // 如果提供了课程Code参数，按课程Code查询
+        if (coursecode != null && !coursecode.trim().isEmpty()) {
+            Optional<Course> course = courseService.getCourseByCode(coursecode);
+            if (course.isPresent()) {
+                return ResponseEntity.ok(ApiResponse.success(course.get()));
+            } else {
+                return ResponseEntity.status(404)
+                        .body(ApiResponse.error(404, "课程不存在，课程Code: " + coursecode));
+            }
+        }
+
+        // 如果提供了教师ID参数，按教师ID查询
+        if (instructorid != null && !instructorid.trim().isEmpty()) {
+            List<Course> course = courseService.getCourseByInstructorId(instructorid);
+            if(course.size() > 0) {
+                return ResponseEntity.ok(ApiResponse.success(course));
+            } else {
+                return ResponseEntity.status(404)
+                        .body(ApiResponse.error(404, "没有该教师"+instructorid+"下的课程"));
+            }
+        }
+
+        // 如果提供了搜索参数，按课程名称搜索
+        if (search != null && !search.trim().isEmpty()) {
+            List<Course> course = courseService.getCourseByTitle(search);
+            if(course.size() > 0) {
+                return ResponseEntity.ok(ApiResponse.success(course));
+            } else {
+                return ResponseEntity.status(404)
+                        .body(ApiResponse.error(404, "没有该课程"));
+            }
+        }
+
+
+
+        // 如果没有提供查询参数，返回所有课程
         List<Course> courses = courseService.getAllCourses();
+        // 返回成功响应
+        return ResponseEntity.ok(ApiResponse.success(courses));
+    }
+//    public ResponseEntity<ApiResponse<List<Course>>> getAllCourses() {
+//        // 调用课程服务获取所有课程
+//        List<Course> courses = courseService.getAllCourses();
+//        // 返回成功响应
+//        return ResponseEntity.ok(ApiResponse.success(courses));
+//    }
+
+    // 获取所有可用课程
+    @GetMapping("/available")
+    public ResponseEntity<ApiResponse<List<Course>>> getAvailableCourses() {
+        // 调用课程服务获取所有可用课程
+        List<Course> courses = courseService.getAvailableCourses();
         // 返回成功响应
         return ResponseEntity.ok(ApiResponse.success(courses));
     }

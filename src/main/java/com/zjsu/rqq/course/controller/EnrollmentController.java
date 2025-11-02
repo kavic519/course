@@ -18,10 +18,38 @@ public class EnrollmentController {
     private EnrollmentService enrollmentService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Enrollment>>> getAllEnrollments() {
+    public ResponseEntity<ApiResponse<?>> getEnrollments(
+            @RequestParam(required = false) String coursecode,
+            @RequestParam(required = false) String studentid,
+            @RequestParam(required = false) String status) {
+        //按课程、学生、状态组合查询
+        if (coursecode != null && studentid != null && status != null){
+            List<Enrollment> enrollments = enrollmentService.getEnrollmentsByCourseAndStudentAndStatus(coursecode, studentid, Enrollment.EnrollmentStatus.valueOf(status));
+            return ResponseEntity.ok(ApiResponse.success(enrollments));
+        }
+
+        //按课程、学生、状态组合查询
         List<Enrollment> enrollments = enrollmentService.getAllEnrollments();
         return ResponseEntity.ok(ApiResponse.success(enrollments));
     }
+
+    //判断学生是否已选课
+    @GetMapping("/isEnrolled")
+    public ResponseEntity<ApiResponse<Boolean>> isStudentEnrolled(
+            @RequestParam String courseCode,
+            @RequestParam String studentId) {
+        boolean enrolled = enrollmentService.isStudentEnrolled(courseCode, studentId);
+        return ResponseEntity.ok(ApiResponse.success(enrolled));
+    }
+
+    //统计课程选课人数
+    @GetMapping("/count/{courseCode}")
+    public ResponseEntity<ApiResponse<Integer>> getCourseEnrollmentCount(
+            @PathVariable String courseCode) {
+        int count = enrollmentService.getCourseEnrollmentCount(courseCode);
+        return ResponseEntity.ok(ApiResponse.success(count));
+    }
+
 
     @GetMapping("/course/{courseId}")
     public ResponseEntity<ApiResponse<List<Enrollment>>> getEnrollmentsByCourseId(
@@ -41,15 +69,15 @@ public class EnrollmentController {
     public ResponseEntity<ApiResponse<Enrollment>> enrollStudent(
             @RequestBody Map<String, String> request) {
         try {
-            String courseId = request.get("courseId");
+            String courseCode = request.get("courseCode");
             String studentId = request.get("studentId");
 
-            if (courseId == null || studentId == null) {
+            if (courseCode == null || studentId == null) {
                 return ResponseEntity.status(400)
-                        .body(ApiResponse.error(400, "courseId和studentId不能为空"));
+                        .body(ApiResponse.error(400, "courseCode和studentId不能为空"));
             }
 
-            Enrollment enrollment = enrollmentService.enrollStudent(courseId, studentId);
+            Enrollment enrollment = enrollmentService.enrollStudent(courseCode, studentId);
             return ResponseEntity.status(201)
                     .body(ApiResponse.success("选课成功", enrollment));
         } catch (IllegalArgumentException e) {

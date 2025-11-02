@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/students")
@@ -22,7 +23,57 @@ public class StudentController {
     private EnrollmentService enrollmentService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Student>>> getAllStudents() {
+    public ResponseEntity<ApiResponse<?>> getStudents(
+            @RequestParam(required = false) String studentid,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String major,
+            @RequestParam(required = false) String grade) {
+
+        // 如果提供了学号参数，按学号查询
+        if (studentid != null && !studentid.trim().isEmpty()) {
+            Optional<Student> student = studentService.getStudentByStudentId(studentid);
+            if (student.isPresent()) {
+                return ResponseEntity.ok(ApiResponse.success(student.get()));
+            } else {
+                return ResponseEntity.status(404)
+                        .body(ApiResponse.error(404, "学生不存在，学号: " + studentid));
+            }
+        }
+
+        // 如果提供了邮箱参数，按邮箱查询
+        if (email != null && !email.trim().isEmpty()) {
+            Optional<Student> student = studentService.getStudentByEmail(email);
+            if (student.isPresent()) {
+                return ResponseEntity.ok(ApiResponse.success(student.get()));
+            } else {
+                return ResponseEntity.status(404)
+                        .body(ApiResponse.error(404, "学生不存在，邮箱: " + email));
+            }
+        }
+
+        // 如果提供了专业参数，按专业查询
+        if (major != null && !major.trim().isEmpty()) {
+            List<Student> students = studentService.getStudentsByMajor(major);
+            if (students.isEmpty()) {
+                return ResponseEntity.status(404)
+                        .body(ApiResponse.error(404, "没有找到专业《" + major + "》下的学生"));
+            }else{
+                return ResponseEntity.ok(ApiResponse.success(students));
+            }
+        }
+
+        // 如果提供了年级参数，按年级查询
+        if (grade != null && !grade.trim().isEmpty()) {
+            List<Student> students = studentService.getStudentsByGrade(Integer.parseInt(grade));
+            if (students.isEmpty()) {
+                return ResponseEntity.status(404)
+                        .body(ApiResponse.error(404, "没有找到年级" + grade + "下的学生"));
+            }else{
+                return ResponseEntity.ok(ApiResponse.success(students));
+            }
+        }
+
+        // 如果没有提供查询参数，返回所有学生
         List<Student> students = studentService.getAllStudents();
         return ResponseEntity.ok(ApiResponse.success(students));
     }

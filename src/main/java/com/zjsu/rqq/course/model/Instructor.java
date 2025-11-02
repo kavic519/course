@@ -1,9 +1,11 @@
 package com.zjsu.rqq.course.model;
 
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 //讲师实体类
+@Embeddable
 public class Instructor {
     @NotBlank(message = "讲师ID不能为空")
     private String id;
