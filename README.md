@@ -20,6 +20,32 @@
 - **API文档**: 提供完整的HTTP测试用例
 
 ### 数据库配置
+- **数据库**: MySQL
+
+- **配置文件**: application.yml
+```declarative
+spring:
+  datasource:
+    url: jdbc:mysql://kavic.xyz:3306/course
+    username: course
+    password: adminkavic
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      continue-on-error: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+```
+- **验证数据库连通性：** localhost:8080/health/db
+
+
 
 
 
