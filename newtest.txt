@@ -1,0 +1,331 @@
+### 新增内容
+### 1 Course新接口测试
+
+### 1.1按课程代码、讲师编号查询
+###1.1.1课程代码
+Get http://localhost:8080/api/courses?coursecode=PH101
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": {
+        "id": "13351339-f068-4ef0-ad42-aeaa03ff74ef",
+        "code": "PH101",
+        "title": "大学物理",
+        "instructor": {
+            "id": "T003",
+            "name": "王教授",
+            "email": "wang@example.edu.cn"
+        },
+        "schedule": {
+            "dayOfWeek": "WEDNESDAY",
+            "startTime": "14:00",
+            "endTime": "16:00",
+            "expectedAttendance": 45
+        },
+        "capacity": 55,
+        "enrolled": 0,
+        "createdAt": "2025-10-31T23:11:23",
+        "updatedAt": "2025-11-01T16:42:55"
+    }
+}
+
+### 1.1.2讲师编号
+Get http://localhost:8080/api/courses?instructorid=T002
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": [
+        {
+            "id": "d510f52f-d103-4819-b00e-ef6ebdc38fda",
+            "code": "MA101",
+            "title": "高等数学",
+            "instructor": {
+                "id": "T002",
+                "name": "李教授",
+                "email": "li@example.edu.cn"
+            },
+            "schedule": {
+                "dayOfWeek": "TUESDAY",
+                "startTime": "10:00",
+                "endTime": "12:00",
+                "expectedAttendance": 40
+            },
+            "capacity": 50,
+            "enrolled": 1,
+            "createdAt": "2025-10-31T23:11:05",
+            "updatedAt": "2025-10-31T23:57:24"
+        }
+    ]
+}
+
+### 1.2统计或筛选有剩余容量的课程
+GET http://localhost:8080/api/courses/available
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": [
+        {
+            "id": "13351339-f068-4ef0-ad42-aeaa03ff74ef",
+            "code": "PH101",
+            "title": "大学物理",
+            "instructor": {
+                "id": "T003",
+                "name": "王教授",
+                "email": "wang@example.edu.cn"
+            },
+            "schedule": {
+                "dayOfWeek": "WEDNESDAY",
+                "startTime": "14:00",
+                "endTime": "16:00",
+                "expectedAttendance": 45
+            },
+            "capacity": 55,
+            "enrolled": 0,
+            "createdAt": "2025-10-31T23:11:23",
+            "updatedAt": "2025-11-01T16:42:55"
+        },
+        {
+            "id": "d510f52f-d103-4819-b00e-ef6ebdc38fda",
+            "code": "MA101",
+            "title": "高等数学",
+            "instructor": {
+                "id": "T002",
+                "name": "李教授",
+                "email": "li@example.edu.cn"
+            },
+            "schedule": {
+                "dayOfWeek": "TUESDAY",
+                "startTime": "10:00",
+                "endTime": "12:00",
+                "expectedAttendance": 40
+            },
+            "capacity": 50,
+            "enrolled": 1,
+            "createdAt": "2025-10-31T23:11:05",
+            "updatedAt": "2025-10-31T23:57:24"
+        },
+        {
+            "id": "f5a772ec-9f1d-44f0-824f-f52080ae77eb",
+            "code": "CS101",
+            "title": "计算机科学导论（更新版）",
+            "instructor": {
+                "id": "T001",
+                "name": "张教授",
+                "email": "zhang@example.edu.cn"
+            },
+            "schedule": {
+                "dayOfWeek": "MONDAY",
+                "startTime": "08:00",
+                "endTime": "10:00",
+                "expectedAttendance": 60
+            },
+            "capacity": 70,
+            "enrolled": 0,
+            "createdAt": "2025-10-31T23:10:33",
+            "updatedAt": "2025-10-31T23:13:30"
+        }
+    ]
+}
+
+
+### 1.3支持标题关键字模糊查询
+GET http://localhost:8080/api/courses?search=大学
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": [
+        {
+            "id": "13351339-f068-4ef0-ad42-aeaa03ff74ef",
+            "code": "PH101",
+            "title": "大学物理",
+            "instructor": {
+                "id": "T003",
+                "name": "王教授",
+                "email": "wang@example.edu.cn"
+            },
+            "schedule": {
+                "dayOfWeek": "WEDNESDAY",
+                "startTime": "14:00",
+                "endTime": "16:00",
+                "expectedAttendance": 45
+            },
+            "capacity": 55,
+            "enrolled": 0,
+            "createdAt": "2025-10-31T23:11:23",
+            "updatedAt": "2025-11-01T16:42:55"
+        }
+    ]
+}
+
+
+### 2 Student新接口测试
+
+### 2.1 按学号或邮箱查找学生
+### 2.1.1 按学号查找学生
+GET http://localhost:8080/api/students?studentid=S2024001
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": {
+        "id": "dcd13196-71e8-48f5-86ed-4e0b76792953",
+        "studentId": "S2024001",
+        "name": "张三",
+        "major": "人工智能",
+        "grade": 2024,
+        "email": "zhangsan_updated@example.edu.cn",
+        "createdAt": "2025-10-31T23:53:17"
+    }
+}
+
+### 2.1.2 按邮箱查找学生
+
+GET http://localhost:8080/api/students?email=zhangsan_updated@example.edu.cn
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": {
+        "id": "dcd13196-71e8-48f5-86ed-4e0b76792953",
+        "studentId": "S2024001",
+        "name": "张三",
+        "major": "人工智能",
+        "grade": 2024,
+        "email": "zhangsan_updated@example.edu.cn",
+        "createdAt": "2025-10-31T23:53:17"
+    }
+}
+
+### 2.2按专业或年级筛选学生
+### 2.2.1 按专业筛选学生
+GET http://localhost:8080/api/students?major=软件工程
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": [
+        {
+            "id": "5fc3bf70-2e43-4e07-a379-a3bdcb6cf59c",
+            "studentId": "S2023003",
+            "name": "学生S003",
+            "major": "软件工程",
+            "grade": 2023,
+            "email": "s003@example.edu.cn",
+            "createdAt": "2025-10-31T23:20:19"
+        },
+        {
+            "id": "dd17299c-00b7-4a9d-a23c-436567e3ac27",
+            "studentId": "S2024002",
+            "name": "李四",
+            "major": "软件工程",
+            "grade": 2024,
+            "email": "lisi@example.edu.cn",
+            "createdAt": "2025-10-31T23:53:33"
+        }
+    ]
+}
+
+### 2.2.2 按年级筛选学生
+Get http://localhost:8080/api/students?grade=2024
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": [
+        {
+            "id": "dcd13196-71e8-48f5-86ed-4e0b76792953",
+            "studentId": "S2024001",
+            "name": "张三",
+            "major": "人工智能",
+            "grade": 2024,
+            "email": "zhangsan_updated@example.edu.cn",
+            "createdAt": "2025-10-31T23:53:17"
+        },
+        {
+            "id": "dd17299c-00b7-4a9d-a23c-436567e3ac27",
+            "studentId": "S2024002",
+            "name": "李四",
+            "major": "软件工程",
+            "grade": 2024,
+            "email": "lisi@example.edu.cn",
+            "createdAt": "2025-10-31T23:53:33"
+        }
+    ]
+}
+
+### 3 Enrollment新接口测试
+
+### 3.1按课程、学生、状态组合查询
+GET http://localhost:8080/api/enrollments?coursecode=CS201&studentid=S2023002&status=ACTIVE
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": [
+        {
+            "id": "3bc3f655-f491-449d-ba9c-1204c81fcc74",
+            "course": {
+                "id": "eb2e3bef-a156-4cfb-9624-b160a45215ce",
+                "code": "CS201",
+                "title": "数据结构",
+                "instructor": {
+                    "id": "T004",
+                    "name": "赵教授",
+                    "email": "zhao@example.edu.cn"
+                },
+                "schedule": {
+                    "dayOfWeek": "THURSDAY",
+                    "startTime": "08:00",
+                    "endTime": "10:00",
+                    "expectedAttendance": 30
+                },
+                "capacity": 2,
+                "enrolled": 2,
+                "createdAt": "2025-10-31T23:19:24",
+                "updatedAt": "2025-10-31T23:44:47"
+            },
+            "student": {
+                "id": "940d049a-ed98-41e6-8812-61322bf1964f",
+                "studentId": "S2023002",
+                "name": "学生S002",
+                "major": "计算机科学",
+                "grade": 2023,
+                "email": "s002@example.edu.cn",
+                "createdAt": "2025-10-31T23:20:08"
+            },
+            "enrolledAt": "2025-10-31T23:44:47",
+            "status": "ACTIVE"
+        }
+    ]
+}
+### 3.2 统计课程活跃人数
+Get http://localhost:8080/api/enrollments/count/CS201
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": 2
+}
+
+### 3.3 判断学生是否已选课
+GET http://localhost:8080/api/enrollments/isEnrolled?courseCode=CS201&studentId=S2023002
+
+## 响应结果：
+{
+    "code": 200,
+    "message": "Success",
+    "data": true
+}
